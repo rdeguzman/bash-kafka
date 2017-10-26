@@ -1,0 +1,35 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          kafka
+# Required-Start:    $local_fs $remote_fs $network $syslog $named
+# Required-Stop:     $local_fs $remote_fs $network $syslog $named
+# Should-Start:      zookeeper
+# Should-Stop:       zookeeper
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts kafka
+# Description:       starts kafka
+### END INIT INFO
+
+KAFKA_DIR="/usr/local/kafka"
+
+case "$1" in
+  start)
+    echo "Starting kafka"
+    sleep 3
+    nohup $KAFKA_DIR/bin/kafka-server-start.sh $KAFKA_DIR/config/server.properties > /var/log/kafka/kafka.log 2>&1 &
+    ;;
+  stop)
+    echo "Stopping kafka_consumer"
+    PID=`ps -auwx | grep "kafka" | grep "server.properties" | head -1 | awk '{print $2}'`
+    echo "Killing $PID"
+    kill -9 $PID
+    ;;
+  *)
+    echo "Usage: /etc/init.d/kafka {start|stop}"
+    exit 1
+  ;;
+esac
+
+exit 0
